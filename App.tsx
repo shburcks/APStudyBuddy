@@ -1,3 +1,53 @@
+// Lightweight client-side placeholder for development/build-time resolution.
+// IMPORTANT: This file is a shim only — do NOT put secret keys or call Google APIs
+// directly from browser code. Replace these functions with calls to your server
+// API routes that call Google Generative AI with a service account.
+
+type SendMessageInput = { message: string };
+type SendMessageResponse = { text: string; candidates?: any[] };
+
+export function initializeChat() {
+  const chat = {
+    // Accepts { message } and returns { text, candidates }
+    sendMessage: async ({ message }: SendMessageInput): Promise<SendMessageResponse> => {
+      // Simulate latency
+      await new Promise((r) => setTimeout(r, 600));
+      // Simple echo response for development
+      return {
+        text: `Echo: ${message}`,
+        candidates: [],
+      };
+    },
+  };
+
+  // Cast to any to avoid strict type coupling with '@google/genai' types in the client
+  return chat as unknown as any;
+}
+
+export async function generateImage(prompt: string): Promise<string> {
+  // Return a placeholder image URL. Replace with server-side image generation.
+  const safe = encodeURIComponent(prompt.slice(0, 40));
+  return `https://via.placeholder.com/512.png?text=${safe}`;
+}
+
+export async function generateQuiz(topic: string, difficulty: string, numQuestions: number) {
+  // Return mocked quiz questions. Replace with server-side generation that calls your model.
+  const questions = Array.from({ length: Math.max(1, numQuestions) }).map((_, i) => ({
+    id: i + 1,
+    question: `${difficulty} question ${i + 1} about ${topic}`,
+    choices: [
+      `Choice A for ${topic}`,
+      `Choice B for ${topic}`,
+      `Choice C for ${topic}`,
+      `Choice D for ${topic}`,
+    ],
+    answerIndex: 0,
+  }));
+
+  // Simulate a small delay
+  await new Promise((r) => setTimeout(r, 400));
+  return questions;
+}
 import React, { useState, useEffect, useRef } from 'react';
 import type { Chat } from '@google/genai';
 import { initializeChat, generateImage, generateQuiz } from './services/geminiService';
